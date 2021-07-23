@@ -2,12 +2,7 @@ const db = require('./database');
 const { v4: uuidv4 } = require("uuid")
 const moment = require('moment')
 const fs = require('fs')
-
 const Ctr = {}
-
-Ctr.home = (req,res)=>{
-    res.send('hello home page')
-}
 
 Ctr.getUserData = async (req, res) => {
     const { id } = req.params
@@ -25,7 +20,7 @@ Ctr.getUser = async (req, res) => {
     else if (user == result.rows[0].username) {
         if (pass == result.rows[0].userpass) {
             res.send({ user: user, id: result.rows[0].id })
-        } else {
+        } else { 
             res.send({ error: 'La contrasena es incorrecta, intente nuevamente' })
         }
     }
@@ -33,7 +28,6 @@ Ctr.getUser = async (req, res) => {
         res.send({ error: 'El usuario no existe' })
     }
 }
-
 Ctr.getDashboard = async (req, res) => {
     const result = await db.query('SELECT * FROM tasks WHERE owner = $1', [req.params.id])
     res.send(result.rows)
@@ -43,7 +37,6 @@ Ctr.getTask = async (req, res) => {
     res.send(result.rows)
 }
 Ctr.saveTask = async (req, res) => {
-    console.log('SAVE TASK ///////////////');
     const newId = uuidv4()
     const { task, expire, reminder } = req.body
     let { notifid } = req.body
@@ -70,7 +63,6 @@ Ctr.saveTask = async (req, res) => {
 }
 
 Ctr.updateTask = async (req, res) => {
-    console.log('UPDATE TASK ///////////////');
     const { task, expire, reminder } = req.body
     let { notifid } = req.body
     let { title, description, exptime, tag, notifytime, id } = task
@@ -94,15 +86,12 @@ Ctr.updateTask = async (req, res) => {
     res.send(result.rows);
 }
 
-
 Ctr.deleteTask = async (req, res) => {
-    console.log('pass here');
     const result = await db.query("DELETE FROM tasks WHERE id = $1", [
         `${req.params.id}`
     ]);
     res.send(result.rows)
 }
-
 
 Ctr.registerUser = async (req, res) => {
     const { username, password } = req.body
@@ -114,10 +103,10 @@ Ctr.registerUser = async (req, res) => {
 
 Ctr.completeTask = async (req, res) => {
     const { tag, id } = req.body
-    const result2 = await db.query('DELETE FROM tasks WHERE id = $1', [id])
-    if (result2.rowCount != 0) {
+    const result1 = await db.query('DELETE FROM tasks WHERE id = $1', [id])
+    if (result1.rowCount != 0) {
         console.log('test');
-        const result1 = await db.query(`UPDATE users SET ${tag} = ${tag} + 1, taskcomplete = taskcomplete + 1 `)
+        const result2 = await db.query(`UPDATE users SET ${tag} = ${tag} + 1, taskcomplete = taskcomplete + 1 `)
     }
     res.send({})
 }
@@ -132,13 +121,11 @@ Ctr.pinTask = async (req, res) => {
     ])
     res.send(result.rows)
 }
-
 Ctr.searchTasks = async (req, res) => {
 
     const { id, title } = req.params
     const fixTitle = '%' + title + '%'
     const result = await db.query(`SELECT * FROM tasks WHERE owner = $1 AND title LIKE $2 `, [id, fixTitle])
-    console.log(result.rows);
     res.send(result.rows)
 }
 ////////////////////////////////////////////////////////////////////////////////////// 
@@ -147,7 +134,7 @@ Ctr.searchTasks = async (req, res) => {
 // Ctr.loadImage = async (req, res) => {
 
 //     // console.log(req.body);
-//     console.log('what');
+//     console.log('over here');
 //     fs.writeFile(`./src/images/${req.body.title}.jpg`, req.body.imgsource, 'base64', (err) => {
 //         if (err) throw err
 //     })
@@ -169,6 +156,6 @@ Ctr.searchTasks = async (req, res) => {
 //     // console.log(img);
 //     // res.send({})    
 // }
-// // const xd = require('./images/')
+// // const test = require('./images/')
 
 module.exports = Ctr
