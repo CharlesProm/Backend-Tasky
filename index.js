@@ -2,7 +2,7 @@ const express = require('express');
 const app = express()
 const routes = require('./src/routes')
 
-app.use(express.json({ limit: '15MB' }))
+// app.use(express.json({ limit: '15MB' }))
 app.use(express.urlencoded({ extended: fasle }));
 app.use(routes)
 
